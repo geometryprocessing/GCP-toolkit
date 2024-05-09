@@ -247,8 +247,6 @@ Eigen::SparseMatrix<double> FrictionPotential::smooth_contact_force_jacobian(
                         collision.dof(lagged_displacements, edges, faces),
                         collision.dof(velocities, edges, faces), //
                         dmin, false);
-                
-                std::cout << "local fric force " << local_force.transpose() << "\n\n";
 
                 Eigen::VectorXd normal_force_grad;
                 std::vector<long> cc_vert_ids;

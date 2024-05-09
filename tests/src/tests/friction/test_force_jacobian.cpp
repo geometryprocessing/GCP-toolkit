@@ -480,8 +480,7 @@ void check_smooth_friction_force_jacobian(
         }
 
         return D.smooth_contact_force(
-            friction_collisions, mesh, X, fd_Ut, velocities, dhat,
-            barrier_stiffness);
+            friction_collisions, mesh, X, fd_Ut, velocities);
     };
     Eigen::MatrixXd fd_JF_wrt_Ut;
     fd::finite_jacobian(fd::flatten(Ut), F_Ut, fd_JF_wrt_Ut);
