@@ -38,22 +38,6 @@ void ORIENTATION_TYPES::set_size(const int size)
     normal_types.assign(size_, HEAVISIDE_TYPE::VARIANT);
 }
 
-bool ORIENTATION_TYPES::are_tangent_types_all_one() const
-{
-    for (const auto& b : tangent_types)
-        if (b != HEAVISIDE_TYPE::ONE)
-            return false;
-    return true;
-}
-
-bool ORIENTATION_TYPES::exists_normal_type_one() const
-{
-    for (const auto& b : normal_types)
-        if (b == HEAVISIDE_TYPE::ONE)
-            return true;
-    return false;
-}
-
 std::tuple<Eigen::Vector3d, Eigen::Matrix3d>
 normalize_vector_grad(const Eigen::Ref<const Eigen::Vector3d>& t)
 {

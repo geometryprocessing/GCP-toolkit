@@ -24,9 +24,6 @@ struct ORIENTATION_TYPES {
     HEAVISIDE_TYPE& tangent_type(const int& i) { return tangent_types[i]; }
     HEAVISIDE_TYPE& normal_type(const int& i) { return normal_types[i]; }
 
-    bool are_tangent_types_all_one() const;
-    bool exists_normal_type_one() const;
-
     int size_ = 0;
     std::vector<HEAVISIDE_TYPE> tangent_types, normal_types;
 };
