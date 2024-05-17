@@ -22,14 +22,14 @@ Point3::Point3(
             "Too many neighbors for point3 primitive! {} > {}! Increase n_vert_neighbors_3d in common.hpp",
             _vert_ids.size(), n_vert_neighbors_3d);
 
-    Eigen::Vector3d v = vertices.row(id);
+    // Eigen::Vector3d v = vertices.row(id);
     MatrixMax<double, n_vert_neighbors_3d, 3> neighbors(n_neighbors, dim);
     int k = 0;
     for (long i : neighbor_ids)
         neighbors.row(k++) = vertices.row(i);
 
-    is_active_ =
-        smooth_point3_term_type(v, d, neighbors, _param, otypes);
+    is_active_ = true;
+        // smooth_point3_term_type(v, d, neighbors, _param, otypes);
 }
 
 int Point3::n_vertices() const { return n_neighbors + 1; }
@@ -523,35 +523,39 @@ scalar smooth_point3_term(
     assert(otypes.size() == neighbors.rows());
 
     const RowVector3<scalar> dn = direc.normalized();
-    scalar tangent_term(1.);
-    scalar weight(0.);
+    // scalar tangent_term(1.);
+    // scalar weight(0.);
     scalar normal_term(0.);
     t_prev = neighbors.row(neighbors.rows() - 1) - v;
     for (int a = 0; a < neighbors.rows(); a++) {
         t = neighbors.row(a) - v;
-        if (otypes.tangent_type(a) == HEAVISIDE_TYPE::VARIANT)
-            tangent_term = tangent_term
-                * Math<scalar>::smooth_heaviside(
-                               -dn.dot(t) / t.norm(), param.alpha_t, param.beta_t);
+        // if (otypes.tangent_type(a) == HEAVISIDE_TYPE::VARIANT)
+        //     tangent_term = tangent_term
+        //         * Math<scalar>::smooth_heaviside(
+        //                        -dn.dot(t) / t.norm(), param.alpha_t, param.beta_t);
 
-        if (otypes.normal_type(a) == HEAVISIDE_TYPE::VARIANT)
-            normal_term =
-                normal_term
-                + Math<scalar>::smooth_heaviside(
-                    dn.dot(t_prev.cross(t).normalized()), param.alpha_n, param.beta_n);
+        // if (otypes.normal_type(a) == HEAVISIDE_TYPE::VARIANT)
+        //     normal_term =
+        //         normal_term
+        //         + Math<scalar>::smooth_heaviside(
+        //             dn.dot(t_prev.cross(t).normalized()), param.alpha_n, param.beta_n);
 
-        weight = weight + t.squaredNorm();
+
+        // weight = weight + t.squaredNorm();
+        normal_term = normal_term + pow(dn.dot(t_prev.cross(t).normalized()), 6);
         std::swap(t, t_prev);
     }
 
-    weight /= 3.;
+    return normal_term;
 
-    if (otypes.normal_type(0) == HEAVISIDE_TYPE::ONE)
-        normal_term = scalar(1.);
-    else
-        normal_term = Math<scalar>::smooth_heaviside(normal_term - 1, 1., 0);
+    // weight /= 3.;
 
-    return weight * normal_term * tangent_term;
+    // if (otypes.normal_type(0) == HEAVISIDE_TYPE::ONE)
+    //     normal_term = scalar(1.);
+    // else
+    //     normal_term = Math<scalar>::smooth_heaviside(normal_term - 1, 1., 0);
+
+    // return weight * normal_term * tangent_term;
 }
 
 template double smooth_point3_term(

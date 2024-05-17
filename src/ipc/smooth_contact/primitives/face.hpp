@@ -30,8 +30,11 @@ template <typename scalar>
 scalar smooth_face_term(
     const Eigen::Ref<const Vector3<scalar>>& v0,
     const Eigen::Ref<const Vector3<scalar>>& v1,
-    const Eigen::Ref<const Vector3<scalar>>& v2)
+    const Eigen::Ref<const Vector3<scalar>>& v2,
+    const Eigen::Ref<const Vector3<scalar>>& dn)
 {
-    return 0.5 * (v1 - v0).cross(v2 - v0).norm(); // area of triangle
+    // return 0.5 * (v1 - v0).cross(v2 - v0).norm(); // area of triangle
+    Vector3<scalar> n = (v2 - v0).cross(v1 - v0);
+    return pow(dn.dot(n) / n.norm(), 6);
 }
 } // namespace ipc

@@ -71,7 +71,7 @@ option(IPC_TOOLKIT_WITH_ROBIN_MAP             "Use Tessil's robin-map rather tha
 option(IPC_TOOLKIT_WITH_ABSEIL                "Use Abseil's hash functions"                    ON)
 option(IPC_TOOLKIT_WITH_FILIB                 "Use filib for interval arithmetic"              ON)
 option(IPC_TOOLKIT_WITH_CODE_COVERAGE         "Enable coverage reporting"                     OFF)
-option(IPC_TOOLKIT_WITH_AUTODIFF              "Enable AutoDiff for computing derivatives"     OFF)
+option(IPC_TOOLKIT_WITH_AUTODIFF              "Enable AutoDiff for computing derivatives"      ON)
 mark_as_advanced(IPC_TOOLKIT_WITH_CODE_COVERAGE)
 
 # Set default minimum C++ standard
@@ -196,6 +196,10 @@ if(IPC_TOOLKIT_WITH_FILIB)
   target_link_libraries(ipc_toolkit PUBLIC filib::filib)
 endif()
 
+# paraviewo (includes HDF5 and h5pp)
+include(paraviewo)
+target_link_libraries(ipc_toolkit PUBLIC paraviewo::paraviewo)
+
 # Extra warnings (link last for highest priority)
 include(ipc_toolkit_warnings)
 target_link_libraries(ipc_toolkit PRIVATE ipc::toolkit::warnings)
@@ -260,6 +264,15 @@ if(IPC_TOOLKIT_WITH_CUDA)
 
   find_package(CUDAToolkit)
   target_link_libraries(ipc_toolkit PRIVATE CUDA::cudart)
+endif()
+
+if(IPC_TOOLKIT_TOPLEVEL_PROJECT)
+  add_executable(ipc_toolkit_bin src/ipc/main.cpp)
+  target_compile_features(ipc_toolkit_bin PUBLIC cxx_std_17)
+  target_link_libraries(ipc_toolkit_bin PUBLIC ipc_toolkit)
+
+  include(cli11)
+  target_link_libraries(ipc_toolkit_bin PUBLIC CLI11::CLI11)
 endif()
 
 ################################################################################

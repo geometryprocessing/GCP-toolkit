@@ -29,33 +29,34 @@ Face::Face(
 {
     _vert_ids = { { mesh.faces()(id, 0), mesh.faces()(id, 1),
                     mesh.faces()(id, 2) } };
-    Vector3d a = vertices.row(_vert_ids[1]) - vertices.row(_vert_ids[0]);
-    Vector3d b = vertices.row(_vert_ids[2]) - vertices.row(_vert_ids[0]);
-    is_active_ = a.cross(b).dot(d) > 0;
+    // Vector3d a = vertices.row(_vert_ids[1]) - vertices.row(_vert_ids[0]);
+    // Vector3d b = vertices.row(_vert_ids[2]) - vertices.row(_vert_ids[0]);
+    // is_active_ = a.cross(b).dot(d) > 0;
+    is_active_ = true;
 }
 int Face::n_vertices() const { return n_face_neighbors_3d; }
 double Face::potential(const Vector3d& d, const Vector9d& x) const
 {
-    return smooth_face_term<double>(x.head<3>(), x.segment<3>(3), x.tail<3>());
+    return smooth_face_term<double>(x.head<3>(), x.segment<3>(3), x.tail<3>(), d);
 }
 Vector12d Face::grad(const Vector3d& d, const Vector9d& x) const
 {
     Vector12d g;
     g.setZero();
-    DiffScalarBase::setVariableCount(9);
-    auto X = slice_positions<ADGrad<9>, 3, 3>(x);
-    g.tail<9>() =
-        smooth_face_term<ADGrad<9>>(X.row(0), X.row(1), X.row(2)).getGradient();
+    DiffScalarBase::setVariableCount(12);
+    auto X = slice_positions<ADGrad<12>, 4, 3>((Vector12d() << d, x).finished());
+    g =
+        smooth_face_term<ADGrad<12>>(X.row(1), X.row(2), X.row(3), X.row(0)).getGradient();
     return g;
 }
 Matrix12d Face::hessian(const Vector3d& d, const Vector9d& x) const
 {
     Matrix12d h;
     h.setZero();
-    DiffScalarBase::setVariableCount(9);
-    auto X = slice_positions<ADHessian<9>, 3, 3>(x);
-    h.bottomRightCorner<9, 9>() =
-        smooth_face_term<ADHessian<9>>(X.row(0), X.row(1), X.row(2))
+    DiffScalarBase::setVariableCount(12);
+    auto X = slice_positions<ADHessian<12>, 4, 3>((Vector12d() << d, x).finished());
+    h =
+        smooth_face_term<ADHessian<12>>(X.row(1), X.row(2), X.row(3), X.row(0))
             .getHessian();
     return h;
 }

@@ -99,8 +99,7 @@ void SmoothCollisionsBuilder<3>::add_edge_edge_collisions(
         const double distance =
             sqrt(edge_edge_distance(ea0, ea1, eb0, eb1, actual_dtype));
 
-        if (actual_dtype != EdgeEdgeDistanceType::EA_EB
-            || distance >= param.dhat)
+        if (distance >= param.dhat)
             continue;
 
         add_collision<3, SmoothCollisionTemplate<max_vert_3d, Edge3, Edge3>>(
@@ -137,7 +136,7 @@ void SmoothCollisionsBuilder<3>::add_face_vertex_collisions(
         if (distance >= vert_dhat(vi))
             continue;
 
-        if (pt_dtype == PointTriangleDistanceType::P_T)
+        // if (pt_dtype == PointTriangleDistanceType::P_T)
             add_collision<
                 3, SmoothCollisionTemplate<max_vert_3d, Face, Point3>>(
                 std::make_shared<
@@ -170,8 +169,7 @@ void SmoothCollisionsBuilder<3>::add_face_vertex_collisions(
                 vertices.row(vi), vertices.row(mesh.edges()(eid, 0)),
                 vertices.row(mesh.edges()(eid, 1)), pe_dtype);
 
-            if (pe_dtype != PointEdgeDistanceType::P_E
-                || sqrt(distance_sqr) >= dhat)
+            if (sqrt(distance_sqr) >= dhat)
                 continue;
 
             add_collision<

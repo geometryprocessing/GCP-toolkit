@@ -25,10 +25,11 @@ Edge3::Edge3(
 {
     auto ids = mesh.find_edge_adjacent_vertices(id);
     _vert_ids = std::vector<long>(ids.begin(), ids.begin() + ids.size());
-    is_active_ = smooth_edge3_term_type(
-        d.normalized(), vertices.row(_vert_ids[0]), vertices.row(_vert_ids[1]),
-        vertices.row(_vert_ids[2]), vertices.row(_vert_ids[3]), _param,
-        otypes);
+    // is_active_ = smooth_edge3_term_type(
+    //     d.normalized(), vertices.row(_vert_ids[0]), vertices.row(_vert_ids[1]),
+    //     vertices.row(_vert_ids[2]), vertices.row(_vert_ids[3]), _param,
+    //     otypes);
+    is_active_ = true;
 }
 
 int Edge3::n_vertices() const { return n_edge_neighbors_3d; }
@@ -514,32 +515,38 @@ scalar smooth_edge3_term_template(
     const ParameterType& param,
     const ORIENTATION_TYPES& otypes)
 {
-    scalar tangent_term = scalar(1.);
-    const Vector3<scalar> t0 =
-        PointEdgeDistance<scalar, 3>::point_line_closest_point_direction(
-            f0, e0, e1).normalized();
-    if (otypes.tangent_type(0) != HEAVISIDE_TYPE::ONE)
-        tangent_term = tangent_term
-            * Math<scalar>::smooth_heaviside(
-                           -dn.dot(t0), param.alpha_t, param.beta_t);
+    // scalar tangent_term = scalar(1.);
+    // const Vector3<scalar> t0 =
+    //     PointEdgeDistance<scalar, 3>::point_line_closest_point_direction(
+    //         f0, e0, e1).normalized();
 
-    const Vector3<scalar> t1 =
-        PointEdgeDistance<scalar, 3>::point_line_closest_point_direction(
-            f1, e0, e1).normalized();
+    // if (otypes.tangent_type(0) != HEAVISIDE_TYPE::ONE)
+    //     tangent_term = tangent_term
+    //         * Math<scalar>::smooth_heaviside(
+    //                        -dn.dot(t0), param.alpha_t, param.beta_t);
 
-    if (otypes.tangent_type(1) != HEAVISIDE_TYPE::ONE)
-        tangent_term = tangent_term
-            * Math<scalar>::smooth_heaviside(
-                           -dn.dot(t1), param.alpha_t, param.beta_t);
+    // const Vector3<scalar> t1 =
+    //     PointEdgeDistance<scalar, 3>::point_line_closest_point_direction(
+    //         f1, e0, e1).normalized();
 
-    scalar normal_term = scalar(1.);
-    if (otypes.normal_type(0) != HEAVISIDE_TYPE::ONE) {
-        const Vector3<scalar> edge = (e0 - e1).normalized();
-        const Vector3<scalar> d = project<scalar>(dn, edge).normalized();
-        normal_term = Math<scalar>::smooth_heaviside((d - t0).cross(d - t1).dot(edge), param.alpha_n, param.beta_n);
-    }
+    // if (otypes.tangent_type(1) != HEAVISIDE_TYPE::ONE)
+    //     tangent_term = tangent_term
+    //         * Math<scalar>::smooth_heaviside(
+    //                        -dn.dot(t1), param.alpha_t, param.beta_t);
 
-    return (e1 - e0).squaredNorm() * tangent_term * normal_term;
+    // scalar normal_term = scalar(1.);
+    // if (otypes.normal_type(0) != HEAVISIDE_TYPE::ONE) {
+    //     const Vector3<scalar> edge = (e0 - e1).normalized();
+    //     const Vector3<scalar> d = project<scalar>(dn, edge).normalized();
+    //     normal_term = Math<scalar>::smooth_heaviside((d - t0).cross(d - t1).dot(edge), param.alpha_n, param.beta_n);
+    // }
+
+    // return (e1 - e0).squaredNorm() * tangent_term * normal_term;
+
+    Vector3<scalar> n0 = (e1 - e0).cross(f0 - e0);
+    Vector3<scalar> n1 = (e1 - e0).cross(f1 - e0);
+
+    return pow(n1.dot(dn) / n1.norm(), 6) + pow(n0.dot(dn) / n0.norm(), 6);
 }
 
 #ifdef DERIVATIVES_WITH_AUTODIFF

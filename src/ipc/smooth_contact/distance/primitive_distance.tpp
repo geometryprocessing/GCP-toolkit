@@ -32,9 +32,10 @@ public:
 
     static T mollifier(const Vector<T, n_core_dofs>& x, const T& dist_sqr)
     {
-        return point_face_mollifier<T>(
-            x.tail(3) /* point */, x.head(3), x.segment(3, 3),
-            x.segment(6, 3) /* face */, dist_sqr);
+        return T(1.);
+        // return point_face_mollifier<T>(
+        //     x.tail(3) /* point */, x.head(3), x.segment(3, 3),
+        //     x.segment(6, 3) /* face */, dist_sqr);
     }
 };
 
@@ -66,12 +67,13 @@ public:
 
     static T mollifier(const Vector<T, n_core_dofs>& x, const T& dist_sqr)
     {
-        std::array<HEAVISIDE_TYPE, 4> types;
-        types.fill(HEAVISIDE_TYPE::VARIANT);
-        return edge_edge_mollifier<T>(
-            x.head(3) /* edge 0 */, x.segment(3, 3) /* edge 0 */,
-            x.segment(6, 3) /* edge 1 */, x.tail(3) /* edge 1 */, types,
-            dist_sqr);
+        return T(1.);
+        // std::array<HEAVISIDE_TYPE, 4> types;
+        // types.fill(HEAVISIDE_TYPE::VARIANT);
+        // return edge_edge_mollifier<T>(
+        //     x.head(3) /* edge 0 */, x.segment(3, 3) /* edge 0 */,
+        //     x.segment(6, 3) /* edge 1 */, x.tail(3) /* edge 1 */, types,
+        //     dist_sqr);
     }
 };
 
@@ -103,9 +105,10 @@ public:
 
     static T mollifier(const Vector<T, n_core_dofs>& x, const T& dist_sqr)
     {
-        return point_edge_mollifier<T>(
-            x.tail(2) /* point */, x.segment(2, 2) /* edge */,
-            x.head(2) /* edge */, dist_sqr);
+        return T(1.);
+        // return point_edge_mollifier<T>(
+        //     x.tail(2) /* point */, x.segment(2, 2) /* edge */,
+        //     x.head(2) /* edge */, dist_sqr);
     }
 };
 
@@ -137,9 +140,10 @@ public:
 
     static T mollifier(const Vector<T, n_core_dofs>& x, const T& dist_sqr)
     {
-        return point_edge_mollifier<T>(
-            x.tail(3) /* point */, x.segment(3, 3) /* edge */,
-            x.head(3) /* edge */, dist_sqr);
+        return T(1.);
+        // return point_edge_mollifier<T>(
+        //     x.tail(3) /* point */, x.segment(3, 3) /* edge */,
+        //     x.head(3) /* edge */, dist_sqr);
     }
 };
 

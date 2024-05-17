@@ -112,7 +112,7 @@ int main(int argc, char **argv) {
     mesh = CollisionMesh(vertices, edges, faces);
 
     SmoothCollisions<dim> collisions;
-    ParameterType param(dhat, alpha_t, 0, alpha_n, 0, dim - 1);
+    ParameterType param(dhat, alpha_t, 0, alpha_n, 0, 6); // dim - 1);
     collisions.build(mesh, vertices, param, false, method);
 
     SmoothContactPotential<SmoothCollisions<dim>> potential(param);
