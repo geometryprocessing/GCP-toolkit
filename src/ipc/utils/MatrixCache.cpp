@@ -262,12 +262,8 @@ namespace ipc
 		}
 		else
 		{
-			const auto &outer_index = main_cache()->outer_index_;
-			const auto &inner_index = main_cache()->inner_index_;
-			const auto &aouter_index = a.main_cache()->outer_index_;
-			const auto &ainner_index = a.main_cache()->inner_index_;
-			assert(ainner_index.size() == inner_index.size());
-			assert(aouter_index.size() == outer_index.size());
+			assert(a.main_cache()->inner_index_.size() == main_cache()->inner_index_.size());
+			assert(a.main_cache()->outer_index_.size() == main_cache()->outer_index_.size());
 			assert(a.values_.size() == values_.size());
 
 			ipc::utils::maybe_parallel_for(a.values_.size(), [&](int start, int end, int thread_id) {
@@ -305,12 +301,8 @@ namespace ipc
 		}
 		else
 		{
-			const auto &outer_index = main_cache()->outer_index_;
-			const auto &inner_index = main_cache()->inner_index_;
-			const auto &oouter_index = o.main_cache()->outer_index_;
-			const auto &oinner_index = o.main_cache()->inner_index_;
-			assert(inner_index.size() == oinner_index.size());
-			assert(outer_index.size() == oouter_index.size());
+			assert(main_cache()->inner_index_.size() == o.main_cache()->inner_index_.size());
+			assert(main_cache()->outer_index_.size() == o.main_cache()->outer_index_.size());
 			assert(values_.size() == o.values_.size());
 
 			ipc::utils::maybe_parallel_for(o.values_.size(), [&](int start, int end, int thread_id) {
