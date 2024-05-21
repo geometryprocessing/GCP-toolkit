@@ -35,6 +35,6 @@ scalar smooth_face_term(
 {
     // return 0.5 * (v1 - v0).cross(v2 - v0).norm(); // area of triangle
     Vector3<scalar> n = (v2 - v0).cross(v1 - v0);
-    return pow(dn.dot(n) / n.norm(), 6);
+    return pow(dn.dot(n) / n.norm(), 6) * n.norm();
 }
 } // namespace ipc

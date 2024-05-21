@@ -546,7 +546,7 @@ scalar smooth_edge3_term_template(
     Vector3<scalar> n0 = (e1 - e0).cross(f0 - e0);
     Vector3<scalar> n1 = (e1 - e0).cross(f1 - e0);
 
-    return pow(n1.dot(dn) / n1.norm(), 6) + pow(n0.dot(dn) / n0.norm(), 6);
+    return (pow(n1.dot(dn) / n1.norm(), 6) + pow(n0.dot(dn) / n0.norm(), 6)) * (e1 - e0).squaredNorm();
 }
 
 #ifdef DERIVATIVES_WITH_AUTODIFF
