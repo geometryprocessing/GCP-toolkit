@@ -131,6 +131,8 @@ public:
     inline int n_candidates() const { return candidates.size(); }
 
 public:
+    bool use_high_order_quadrature = false;
+
     std::vector<std::shared_ptr<value_type>> collisions;
 
     Eigen::VectorXd vert_adaptive_dhat;

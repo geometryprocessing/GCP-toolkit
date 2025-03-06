@@ -160,6 +160,7 @@ void define_collisions(py::module_& m)
 
     py::class_<SmoothCollisions<2>>(m, "SmoothCollisions2")
         .def(py::init())
+        .def_readwrite("use_high_order_quadrature", &SmoothCollisions<2>::use_high_order_quadrature)
         .def(
             "build",
             py::overload_cast<

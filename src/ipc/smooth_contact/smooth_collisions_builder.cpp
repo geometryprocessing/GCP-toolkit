@@ -19,12 +19,10 @@ namespace {
             std::shared_ptr<typename SmoothCollisions<dim>::value_type>>&
             collisions_)
     {
-        if (pair->is_active() && cc_to_id_.find(pair->get_hash()) == cc_to_id_.end())
-        {
+        if (pair->is_active()
+            && cc_to_id_.find(pair->get_hash()) == cc_to_id_.end()) {
             // New collision, so add it to the end of collisions
-            cc_to_id_.emplace(
-                pair->get_hash(),
-                pair);
+            cc_to_id_.emplace(pair->get_hash(), pair);
             collisions_.push_back(pair);
         }
     }
@@ -107,7 +105,8 @@ void SmoothCollisionsBuilder<3>::add_edge_edge_collisions(
             std::make_shared<
                 SmoothCollisionTemplate<max_vert_3d, Edge3, Edge3>>(
                 std::min(eai, ebi), std::max(eai, ebi), actual_dtype, mesh,
-                param, std::min(edge_dhat(eai), edge_dhat(ebi)), vertices), collisions);
+                param, std::min(edge_dhat(eai), edge_dhat(ebi)), vertices),
+            collisions);
     }
 }
 
@@ -143,7 +142,8 @@ void SmoothCollisionsBuilder<3>::add_face_vertex_collisions(
                 std::make_shared<
                     SmoothCollisionTemplate<max_vert_3d, Face, Point3>>(
                     fi, vi, pt_dtype, mesh, param,
-                    std::min(face_dhat(fi), vert_dhat(vi)), vertices), collisions);
+                    std::min(face_dhat(fi), vert_dhat(vi)), vertices),
+                collisions);
 
         for (int lv = 0; lv < 3; lv++) {
             const auto& vj = mesh.faces()(fi, lv);
@@ -205,10 +205,11 @@ void SmoothCollisionsBuilder<3>::merge(
     merged_collisions.collisions.reserve(total);
 
     // merge
-    for (const auto& builder : local_storage)
-    {
-        vert_vert_3_to_id.insert(builder.vert_vert_3_to_id.begin(), builder.vert_vert_3_to_id.end());
-        edge_vert_3_to_id.insert(builder.edge_vert_3_to_id.begin(), builder.edge_vert_3_to_id.end());
+    for (const auto& builder : local_storage) {
+        vert_vert_3_to_id.insert(
+            builder.vert_vert_3_to_id.begin(), builder.vert_vert_3_to_id.end());
+        edge_vert_3_to_id.insert(
+            builder.edge_vert_3_to_id.begin(), builder.edge_vert_3_to_id.end());
     }
     int edge_vert_count = edge_vert_3_to_id.size();
     int vert_vert_count = vert_vert_3_to_id.size();
@@ -220,17 +221,12 @@ void SmoothCollisionsBuilder<3>::merge(
     for (const auto& [key, val] : edge_vert_3_to_id)
         merged_collisions.collisions.push_back(val);
 
-    for (const auto& builder : local_storage)
-    {
-        for (const auto& cc : builder.collisions)
-        {
-            if (cc->type() == CollisionType::FaceVertex)
-            {
+    for (const auto& builder : local_storage) {
+        for (const auto& cc : builder.collisions) {
+            if (cc->type() == CollisionType::FaceVertex) {
                 face_vert_count++;
                 merged_collisions.collisions.push_back(cc);
-            }
-            else if (cc->type() == CollisionType::EdgeEdge)
-            {
+            } else if (cc->type() == CollisionType::EdgeEdge) {
                 edge_edge_count++;
                 merged_collisions.collisions.push_back(cc);
             }
@@ -266,10 +262,11 @@ void SmoothCollisionsBuilder<2>::merge(
     merged_collisions.collisions.reserve(total);
 
     // merge
-    for (auto& builder : local_storage)
-    {
-        vert_vert_2_to_id.insert(builder.vert_vert_2_to_id.begin(), builder.vert_vert_2_to_id.end());
-        vert_edge_2_to_id.insert(builder.vert_edge_2_to_id.begin(), builder.vert_edge_2_to_id.end());
+    for (auto& builder : local_storage) {
+        vert_vert_2_to_id.insert(
+            builder.vert_vert_2_to_id.begin(), builder.vert_vert_2_to_id.end());
+        vert_edge_2_to_id.insert(
+            builder.vert_edge_2_to_id.begin(), builder.vert_edge_2_to_id.end());
     }
     int edge_vert_count = vert_edge_2_to_id.size();
     int vert_vert_count = vert_vert_2_to_id.size();
@@ -284,7 +281,90 @@ void SmoothCollisionsBuilder<2>::merge(
         vert_vert_count);
 }
 
-template class SmoothCollisionsBuilder<2>;
-template class SmoothCollisionsBuilder<3>;
+void HighOrderSmoothCollisionsBuilder<2>::add_edge_vertex_collisions(
+    const CollisionMesh& mesh,
+    const Eigen::MatrixXd& vertices,
+    const std::vector<EdgeVertexCandidate>& candidates,
+    const ParameterType& param,
+    const std::function<double(const long&)>& vert_dhat,
+    const std::function<double(const long&)>& edge_dhat,
+    const size_t start_i,
+    const size_t end_i)
+{
+    for (size_t i = start_i; i < end_i; i++) {
+        const auto& [ei, vi] = candidates[i];
 
+        add_collision<2, EdgeVertex2D>(
+            std::make_shared<EdgeVertex2D>(
+                ei, vi, mesh, std::min(edge_dhat(ei), vert_dhat(vi)), vertices),
+            edge_vert_2_to_id, collisions);
+
+        for (long ej : mesh.vertex_edge_adjacencies()[vi]) {
+            // two edges are adjacent or overlapping
+            if (mesh.edges()(ei, 0) == mesh.edges()(ej, 0) ||
+                    mesh.edges()(ei, 1) == mesh.edges()(ej, 0) ||
+                    mesh.edges()(ei, 0) == mesh.edges()(ej, 1) ||
+                    mesh.edges()(ei, 1) == mesh.edges()(ej, 1))
+                continue;
+            add_collision<2, EdgeEdge2D>(
+                std::make_shared<EdgeEdge2D>(
+                    std::min(ei, ej), std::max(ei, ej), mesh, std::min(edge_dhat(ei), edge_dhat(ej)),
+                    vertices),
+                edge_edge_2_to_id, collisions);
+        }
+
+        for (int j : { 0, 1 }) {
+            add_collision<2, VertexVertex2D>(
+                std::make_shared<VertexVertex2D>(
+                    mesh.edges()(ei, j), vi, mesh,
+                    std::min(vert_dhat(mesh.edges()(ei, j)), vert_dhat(vi)),
+                    vertices),
+                vert_vert_2_to_id, collisions);
+        }
+    }
+}
+
+void HighOrderSmoothCollisionsBuilder<2>::merge(
+    const utils::ParallelCacheType<HighOrderSmoothCollisionsBuilder<2>>&
+        local_storage,
+    SmoothCollisions<2>& merged_collisions)
+{
+    unordered_map<std::pair<long, long>, std::shared_ptr<VertexVertex2D>>
+        vert_vert_2_to_id;
+    unordered_map<std::pair<long, long>, std::shared_ptr<EdgeVertex2D>>
+        edge_vert_2_to_id;
+    unordered_map<std::pair<long, long>, std::shared_ptr<EdgeEdge2D>>
+        edge_edge_2_to_id;
+
+    // size up the hash items
+    size_t total = 0;
+    for (const auto& storage : local_storage)
+        total += storage.collisions.size();
+
+    merged_collisions.collisions.reserve(total);
+
+    // merge
+    for (auto& builder : local_storage) {
+        vert_vert_2_to_id.insert(
+            builder.vert_vert_2_to_id.begin(), builder.vert_vert_2_to_id.end());
+        edge_vert_2_to_id.insert(
+            builder.edge_vert_2_to_id.begin(), builder.edge_vert_2_to_id.end());
+        edge_edge_2_to_id.insert(
+            builder.edge_edge_2_to_id.begin(), builder.edge_edge_2_to_id.end());
+    }
+    int edge_vert_count = edge_vert_2_to_id.size();
+    int vert_vert_count = vert_vert_2_to_id.size();
+    int edge_edge_count = edge_edge_2_to_id.size();
+
+    for (const auto& [key, val] : vert_vert_2_to_id)
+        merged_collisions.collisions.push_back(val);
+    for (const auto& [key, val] : edge_vert_2_to_id)
+        merged_collisions.collisions.push_back(val);
+    for (const auto& [key, val] : edge_edge_2_to_id)
+        merged_collisions.collisions.push_back(val);
+
+    logger().trace(
+        "edge-vert pairs {}, vert-vert pairs {}, edge-edge pairs {}",
+        edge_vert_count, vert_vert_count, edge_edge_count);
+}
 } // namespace ipc
