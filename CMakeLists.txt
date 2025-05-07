@@ -139,9 +139,6 @@ target_link_libraries(ipc_toolkit PUBLIC Eigen3::Eigen)
 include(libigl)
 target_link_libraries(ipc_toolkit PUBLIC igl::core igl::predicates)
 
-# autodiff
-include(autodiff)
-
 # TBB
 include(onetbb)
 target_link_libraries(ipc_toolkit PUBLIC TBB::tbb)
