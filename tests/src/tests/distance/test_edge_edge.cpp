@@ -317,7 +317,7 @@ TEST_CASE(
     otypes.set_size(2);
     const double alpha = 0.85;
     const double beta = 0.2;
-    ParameterType param{1e-3, 1, 0, alpha, beta, 2};
+    ParameterType param{1e-3, 1, 0, alpha, beta, 2, 1};
 
     ipc::Vector3d dn, e0, e1, f0, f1;
     e0 << 0, 0, 0;

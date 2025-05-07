@@ -73,7 +73,7 @@ TEST_CASE(
     {
         SmoothCollisions<3> collisions;
 
-        ParameterType param(dhat, 0.8, 0, 1, 0, 2);
+        ParameterType param(dhat, 0.8, 0, 1, 0, 2, 1);
         collisions.build(mesh, vertices, param, false, method);
         CHECK(collisions.size() > 0);
         std::cout << "OIPC number of pairs (only tangent) " << collisions.size() << "\n";
@@ -82,7 +82,7 @@ TEST_CASE(
     {
         SmoothCollisions<3> collisions;
 
-        ParameterType param(dhat, 1, 0, 0, 0.1, 2);
+        ParameterType param(dhat, 1, 0, 0, 0.1, 2, 1);
         collisions.build(mesh, vertices, param, false, method);
         CHECK(collisions.size() > 0);
         std::cout << "OIPC number of pairs (only normal) " << collisions.size() << "\n";
@@ -91,7 +91,7 @@ TEST_CASE(
     {
         SmoothCollisions<3> collisions;
 
-        ParameterType param(dhat, 0.8, 0, 0, 0.1, 2);
+        ParameterType param(dhat, 0.8, 0, 0, 0.1, 2, 1);
         collisions.build(mesh, vertices, param, false, method);
         CHECK(collisions.size() > 0);
         std::cout << "OIPC number of pairs (both) " << collisions.size() << "\n";
@@ -100,7 +100,7 @@ TEST_CASE(
     {
         SmoothCollisions<3> collisions;
 
-        ParameterType param(dhat, 0.5, 0, 0, 0.1, 2);
+        ParameterType param(dhat, 0.5, 0, 0, 0.1, 2, 1);
         collisions.build(mesh, vertices, param, false, method);
         CHECK(collisions.size() > 0);
         std::cout << "OIPC number of pairs (both) " << collisions.size() << "\n";
@@ -109,7 +109,7 @@ TEST_CASE(
     {
         SmoothCollisions<3> collisions;
 
-        ParameterType param(dhat, 0.1, 0, 0, 0.1, 2);
+        ParameterType param(dhat, 0.1, 0, 0, 0.1, 2, 1);
         collisions.build(mesh, vertices, param, false, method);
         CHECK(collisions.size() > 0);
         std::cout << "OIPC number of pairs (both) " << collisions.size() << "\n";
@@ -168,7 +168,7 @@ TEST_CASE(
         vertices = mesh.vertices(vertices);
     }
 
-    ParameterType param(dhat, 0.85, 0.5, 0.95, 0.6, 2);
+    ParameterType param(dhat, 0.85, 0.5, 0.95, 0.6, 2, 1);
     param.set_adaptive_dhat_ratio(min_dist_ratio);
     collisions.compute_adaptive_dhat(mesh, vertices, param, method);
     collisions.build(mesh, vertices, param, adaptive_dhat, method);
@@ -248,7 +248,7 @@ TEST_CASE(
     // std::cout << "\n" <<  vertices << "\n" << edges << "\n";
 
     CollisionMesh mesh;
-    ParameterType param(dhat, 0.9, -0.05, 0.95, 0.05, 1);
+    ParameterType param(dhat, 0.9, -0.05, 0.95, 0.05, 1, 1);
     param.set_adaptive_dhat_ratio(min_dist_ratio);
     SmoothCollisions<2> collisions;
     mesh = CollisionMesh(vertices, edges, faces);
@@ -334,7 +334,7 @@ TEST_CASE(
     // std::cout << "\n" <<  vertices << "\n" << edges << "\n";
 
     CollisionMesh mesh;
-    ParameterType param(dhat, 0.9, -0.05, 0.95, 0.05, 1);
+    ParameterType param(dhat, 0.9, -0.05, 0.95, 0.05, 1, 1);
     param.set_adaptive_dhat_ratio(min_dist_ratio);
     SmoothCollisions<2> collisions;
     mesh = CollisionMesh(vertices, edges, faces);
@@ -436,7 +436,7 @@ TEST_CASE(
         timer.start();
         SmoothCollisions<3> collisions;
 
-        ParameterType param(dhat, 0.8, 0, 0, 0.1, 2);
+        ParameterType param(dhat, 0.8, 0, 0, 0.1, 2, 1);
         collisions.build(mesh, vertices, param, false, method);
         CHECK(collisions.size() > 0);
         // std::cout << "OIPC number of pairs (both) " << collisions.size() << "\n";

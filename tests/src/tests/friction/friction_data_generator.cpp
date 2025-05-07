@@ -170,7 +170,7 @@ SmoothFrictionData<3> smooth_friction_data_generator_3d()
     barrier_stiffness = 1.; // 100;
 #endif
 
-    param = ParameterType(dhat, 0.8, 0, 1, 0, 2);
+    param = ParameterType(dhat, 0.8, 0, 1, 0, 2, 1);
     const double max_d = dhat * 0.9;
     const double min_d = dhat * 0.1;
     const double d = GENERATE_COPY(range(min_d, max_d, max_d / 10));
@@ -370,7 +370,7 @@ SmoothFrictionData<2> smooth_friction_data_generator_2d()
     barrier_stiffness = 1.; // 100;
 #endif
 
-    param = ParameterType(dhat, 0.8, 0, 1, 0, 2);
+    param = ParameterType(dhat, 0.8, 0, 1, 0, 2, 1);
     const double max_d = dhat * 0.9;
     const double min_d = dhat * 0.1;
     const double d = GENERATE_COPY(range(min_d, max_d, max_d / 10));
