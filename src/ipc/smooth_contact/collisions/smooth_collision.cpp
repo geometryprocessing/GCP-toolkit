@@ -130,19 +130,45 @@ double SmoothCollisionTemplate<max_vert, PrimitiveA, PrimitiveB>::operator()(
     const double dist = closest_direction.norm();
 
     assert(positions.size() == pA->n_dofs() + pB->n_dofs());
-    double a1 = pA->potential(closest_direction, positions.head(pA->n_dofs()));
-    double a2 = pB->potential(-closest_direction, positions.tail(pB->n_dofs()));
-    double a3 = Math<double>::inv_barrier(dist / Super::get_dhat(), params.r);
-    double a4 =
-        PrimitiveDistanceTemplate<PrimitiveA, PrimitiveB, double>::mollifier(
-            x, dist * dist);
 
-    if (dist < 1e-12)
-        logger().warn(
-            "pair distance {:.3e}, barrier {:.3e}, mollifier {:.3e}, orient {:.3e} {:.3e}",
-            dist, a3, a4, a1, a2);
+    if constexpr (std::is_same_v<PrimitiveA, Edge2> && std::is_same_v<PrimitiveB, Point2> && dim == 2)
+    {
+        double a1 = pA->potential(closest_direction, positions.head(pA->n_dofs()));
+        double a2 = pB->potential(-closest_direction, positions.tail(pB->n_dofs()));
+        double a3 = Math<double>::inv_barrier(dist / Super::get_dhat(), params.r);
+        
+        {
+            const Vector2<double> p = positions.template segment<2>(4);
+            const Vector2<double> e0 = positions.template segment<2>(0);
+            const Vector2<double> e1 = positions.template segment<2>(2);
 
-    return a1 * a2 * a3 * a4;
+            double tangent_term = Math<double>::smooth_heaviside(-(p - e0).dot(e1 - e0) / (p - e0).norm() / (e1 - e0).norm(), params.alpha_t, params.beta_t);
+            double b0 = Math<double>::inv_barrier((p - e0).norm() / Super::get_dhat(), params.r);
+            a3 -= tangent_term * b0;
+
+            tangent_term = Math<double>::smooth_heaviside(-(p - e1).dot(e0 - e1) / (p - e1).norm() / (e0 - e1).norm(), params.alpha_t, params.beta_t);
+            b0 = Math<double>::inv_barrier((p - e1).norm() / Super::get_dhat(), params.r);
+            a3 -= tangent_term * b0;
+        }
+
+        return a1 * a2 * a3;
+    }
+    else
+    {
+        double a1 = pA->potential(closest_direction, positions.head(pA->n_dofs()));
+        double a2 = pB->potential(-closest_direction, positions.tail(pB->n_dofs()));
+        double a3 = Math<double>::inv_barrier(dist / Super::get_dhat(), params.r);
+        double a4 =
+            PrimitiveDistanceTemplate<PrimitiveA, PrimitiveB, double>::mollifier(
+                x, dist * dist);
+
+        if (dist < 1e-12)
+            logger().warn(
+                "pair distance {:.3e}, barrier {:.3e}, mollifier {:.3e}, orient {:.3e} {:.3e}",
+                dist, a3, a4, a1, a2);
+
+        return a1 * a2 * a3 * a4;
+    }
 }
 
 template <int max_vert, typename PrimitiveA, typename PrimitiveB>

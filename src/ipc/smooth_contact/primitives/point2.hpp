@@ -36,6 +36,9 @@ public:
     MatrixMax<double, max_size + dim, max_size + dim> hessian(
         const Vector<double, dim>& d,
         const Vector<double, -1, max_size>& x) const;
+    
+private:
+    bool has_neighbor_1, has_neighbor_2;
 };
 
 /// @brief
