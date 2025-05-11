@@ -47,9 +47,9 @@ double VertexVertex2D::operator()(
     const Eigen::Vector2d direc = positions.segment<2>(6) - positions.segment<2>(0);
     const double dist = direc.norm();
     return smooth_point2_term<double>(
-               positions.segment<2>(0), direc, positions.segment<2>(2), positions.segment<2>(4), params)
+               positions.segment<2>(0), direc, positions.segment<2>(2), positions.segment<2>(4), params, true)
         * smooth_point2_term<double>(
-               positions.segment<2>(6), -direc, positions.segment<2>(8), positions.segment<2>(10), params)
+               positions.segment<2>(6), -direc, positions.segment<2>(8), positions.segment<2>(10), params, true)
         * Math<double>::inv_barrier(dist / params.dhat, params.r);
 }
 

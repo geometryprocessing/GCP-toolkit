@@ -60,7 +60,7 @@ double EdgeVertex2D::operator()(
         return Math<double>::cubic_spline((1. - direc.dot(n) / dist) / params.alpha_n)
             * smooth_point2_term<double>(
                    p, -direc, positions.segment<2>(6), positions.segment<2>(8),
-                   params)
+                   params, true)
             * Math<double>::inv_barrier(dist / params.dhat, params.r);
     };
 
