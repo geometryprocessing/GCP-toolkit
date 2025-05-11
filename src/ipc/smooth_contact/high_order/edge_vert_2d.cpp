@@ -68,7 +68,7 @@ double EdgeVertex2D::operator()(
     const int n_samples = params.n_quadrature_samples;
     double result = 0.;
     for (int i = 0; i <= n_samples; i++) {
-        double f = integrand((double)i / n_samples);
+        double f = integrand(static_cast<double>(i) / n_samples);
         result += f;
     }
     result *= l / n_samples;

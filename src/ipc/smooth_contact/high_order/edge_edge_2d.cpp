@@ -64,7 +64,7 @@ double EdgeEdge2D::operator()(
     double result = 0.;
     for (int i = 0; i <= n_samples; i++) {
         for (int j = 0; j <= n_samples; j++) {
-            double f = integrand((double)i / n_samples, (double)j / n_samples);
+            double f = integrand(static_cast<double>(i) / n_samples, static_cast<double>(j) / n_samples);
             result += f;
         }
     }
