@@ -131,7 +131,7 @@ double SmoothCollisionTemplate<max_vert, PrimitiveA, PrimitiveB>::operator()(
 
     assert(positions.size() == pA->n_dofs() + pB->n_dofs());
 
-    if constexpr (std::is_same_v<PrimitiveA, Edge2> && std::is_same_v<PrimitiveB, Point2> && dim == 2)
+    if constexpr (std::is_same_v<PrimitiveA, Edge2> && std::is_same_v<PrimitiveB, Point2>)
     {
         double a1 = pA->potential(closest_direction, positions.head(pA->n_dofs()));
         double a2 = pB->potential(-closest_direction, positions.tail(pB->n_dofs()));
@@ -180,6 +180,7 @@ auto SmoothCollisionTemplate<max_vert, PrimitiveA, PrimitiveB>::gradient(
         positions,
     const ParameterType& params) const -> Vector<double, -1, max_size>
 {
+    throw std::runtime_error("Fix me for the new formulation!");
     const auto core_indices = get_core_indices();
 
     Vector<double, n_core_dofs> x;
@@ -293,6 +294,7 @@ auto SmoothCollisionTemplate<max_vert, PrimitiveA, PrimitiveB>::hessian(
         positions,
     const ParameterType& params) const -> MatrixMax<double, max_size, max_size>
 {
+    throw std::runtime_error("Fix me for the new formulation!");
     const auto core_indices = get_core_indices();
 
     Vector<double, n_core_dofs> x;

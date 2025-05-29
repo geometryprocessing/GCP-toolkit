@@ -87,9 +87,10 @@ public:
         const Vector<T, n_core_dofs>& x,
         typename PrimitiveDistType<Edge2, Point2>::type dtype)
     {
-        return PointEdgeDistance<T, dim>::point_edge_sqr_distance(
-            x.template tail<2>() /* point */, x.template head<2>() /* edge */,
-            x.template segment<2>(2) /* edge */, dtype);
+        return T(1.);
+        // return PointEdgeDistance<T, dim>::point_edge_sqr_distance(
+        //     x.template tail<2>() /* point */, x.template head<2>() /* edge */,
+        //     x.template segment<2>(2) /* edge */, dtype);
     }
 
     static Vector<T, dim> compute_closest_direction(

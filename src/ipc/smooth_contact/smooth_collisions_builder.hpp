@@ -32,7 +32,8 @@ public:
     static void merge(
         const utils::ParallelCacheType<SmoothCollisionsBuilder<2>>&
             local_storage,
-        SmoothCollisions<2>& merged_collisions);
+        SmoothCollisions<2>& merged_collisions,
+        const CollisionMesh& mesh);
 
     // Constructed collisions
     std::vector<std::shared_ptr<typename SmoothCollisions<2>::value_type>>
@@ -81,7 +82,8 @@ public:
     static void merge(
         const utils::ParallelCacheType<SmoothCollisionsBuilder<3>>&
             local_storage,
-        SmoothCollisions<3>& merged_collisions);
+        SmoothCollisions<3>& merged_collisions,
+        const CollisionMesh& mesh);
 
     // Constructed collisions
     std::vector<std::shared_ptr<typename SmoothCollisions<3>::value_type>>

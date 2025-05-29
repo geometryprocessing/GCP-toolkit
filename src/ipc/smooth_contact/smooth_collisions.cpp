@@ -206,7 +206,7 @@ void SmoothCollisions<dim>::build(
                     edge_dhat, face_dhat, start, end);
             });
         }
-        SmoothCollisionsBuilder<dim>::merge(storage, *this);
+        SmoothCollisionsBuilder<dim>::merge(storage, *this, mesh);
     }
     candidates = candidates_;
 
@@ -258,15 +258,11 @@ std::string SmoothCollisions<dim>::to_string(
         ss << "\n";
         {
             ss << fmt::format(
-                "[{}]: ({} {}) dist {} potential {} grad {}", cc->name(),
-                (*cc)[0], (*cc)[1],
+                "[{}]: ({} {}) weight {} dist {} potential {}", cc->name(),
+                (*cc)[0], (*cc)[1], cc->weight,
                 cc->compute_distance(
                     cc->dof(vertices, mesh.edges(), mesh.faces())),
-                (*cc)(cc->dof(vertices, mesh.edges(), mesh.faces()), params),
-                (*cc)
-                    .gradient(
-                        cc->dof(vertices, mesh.edges(), mesh.faces()), params)
-                    .norm());
+                (*cc)(cc->dof(vertices, mesh.edges(), mesh.faces()), params));
         }
     }
     return ss.str();

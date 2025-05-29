@@ -225,6 +225,7 @@ void define_collisions(py::module_& m)
 
     py::class_<SmoothCollision<6>>(m, "SmoothCollision2")
         .def("n_dofs", &SmoothCollision<6>::n_dofs, "Get the degree of freedom")
+        .def_readwrite("weight", &Collision<6>::weight)
         .def(
             "__call__",
             &SmoothCollision<6>::operator(),
